@@ -1,9 +1,12 @@
+
 import React from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import TopNav from "@/components/nav/top-nav";
+import { ThemeProvider } from "@/context/theme";
+
 
 
 const geistSans = Geist({
@@ -39,6 +42,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
+      
     <html lang="en">
        <head>
         <link rel="icon" href="icon-96.png" />
@@ -47,12 +51,20 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
         <header>
           <TopNav />
         </header>
        <main>{children}</main>
+       </ThemeProvider>
       </body>
     </html>
+    
     </ClerkProvider>
     
   );
