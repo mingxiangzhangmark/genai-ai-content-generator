@@ -7,7 +7,7 @@ import { ModeToggle } from './theme-toggle';
 
 export default function TopNav() {
   const { isSignedIn, user } = useUser();
-  console.log({ isSignedIn, user });
+  // console.log({ isSignedIn, user });
 
   return (
     <nav className="flex justify-between items-center p-2 shadow-md">
