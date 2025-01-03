@@ -155,10 +155,12 @@ import { ArrowLeft, CircleCheck, Copy, Loader2Icon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useParams } from 'next/navigation';
-import { runAi } from '@/app/actions/ai';
+import { runAi, saveQuery } from '@/app/actions/ai';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/react-editor';
 import toast from "react-hot-toast";
+import { useUser } from '@clerk/nextjs';
+
 
 export interface Template {
   name: string;
@@ -184,6 +186,9 @@ export interface Template {
   const [loading, setLoading] = useState < boolean > (false);
   const editorRef = React.useRef<any>(null);
   const [copySuccess, setCopySuccess] = useState(false);
+  const { user } = useUser();
+
+  const email = user?.primaryEmailAddress?.emailAddress || "";
 
     React.useEffect(() => {
     if (content) {
@@ -195,20 +200,22 @@ export interface Template {
   const t = template.find((item) => item.slug === params.slug) as
  Template;
 
- const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    // console.log("submitted => ", t.aiPrompt, query);
+
     try {
-    const data = await runAi(t.aiPrompt + query);
-    setContent(data);
-    // save to db (userEmail, query, content, templateSlug)
+      const data = await runAi(t.aiPrompt + query);
+      setContent(data);
+      // save to db
+      await saveQuery(t, email, query, data);
+      // fetchUsage();
     } catch (err) {
-    setContent("Failed to generate content. Try again.");
+      setContent("An error occurred. Please try again.");
     } finally {
-    setLoading(false);
+      setLoading(false);
     }
- };
+  };
 
    const handleCopy = async () => {
     const editorInstance = editorRef.current.getInstance();

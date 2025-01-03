@@ -125,6 +125,10 @@
 // }
 
 "use server";
+
+import Query from "@/models/query";
+import db from "@/utils/db";
+
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 export async function runAi(text: string) {
@@ -134,5 +138,61 @@ export async function runAi(text: string) {
   return result.response.text();
 }
 
+export async function saveQuery(
+  template: object,
+  email: string,
+  query: string,
+  content: string
+) {
+  try {
+    await db();
 
+    const newQuery = new Query({
+      template,
+      email,
+      query,
+      content,
+    });
+
+    await newQuery.save();
+    return {
+      ok: true,
+    };
+  } catch (err) {
+    return {
+      ok: false,
+    };
+  }
+}
+
+
+export async function getQueries(
+  email: string,
+  page: number,
+  pageSize: number
+) {
+  try {
+    await db();
+
+    const skip = (page - 1) * pageSize;
+    const totalQueries = await Query.countDocuments({ email });
+
+    const queries = await Query.find({ email })
+      .skip(skip)
+      .limit(pageSize)
+      .sort({ createdAt: -1 })
+      .lean();;
+
+    const plainQueries = JSON.parse(JSON.stringify(queries));
+
+    return {
+      queries: plainQueries,
+      totalPages: Math.ceil(totalQueries / pageSize),
+    };
+  } catch (err) {
+    return {
+      ok: false,
+    };
+  }
+}
 
