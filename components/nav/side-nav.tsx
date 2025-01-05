@@ -8,7 +8,8 @@ import {
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-// import Usage from "@/components/nav/usage";
+import Usage from "./usage";
+
 // import SignUpModal from "@/components/modal/sign-up-modal";
 
 export default function SideNav() {
@@ -51,11 +52,11 @@ export default function SideNav() {
                 : "hover:bg-indigo-600 hover:text-white"
             } flex m-2 mr-2 p-2 rounded-lg cursor-pointer border`}
           >
-            <div className="flex justify-center items-center md:justify-start w-full" >
+            <div className="flex justify-center items-center md:justify-start w-full " >
               <Link href={item.path} className="flex">
                 <item.icon />{" "}
                 {/* use hidden class to show only icon in small screen */}
-                <span className="ml-2 hidden md:inline">{item.name}</span>
+                <span className="ml-2 ">{item.name}</span>
               </Link>
             </div>
           </li>
@@ -63,8 +64,8 @@ export default function SideNav() {
       </ul>
 
       <div className="pb-20 mt-auto">
-        {/* <Usage />
-        <SignUpModal /> */}
+        <Usage/>
+        {/* <SignUpModal /> */}
       </div>
     </div>
   );

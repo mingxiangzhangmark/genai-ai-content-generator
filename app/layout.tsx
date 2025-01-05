@@ -6,6 +6,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import TopNav from "@/components/nav/top-nav";
 import { ThemeProvider } from "@/context/theme";
+import { UsageProvider } from "@/context/usage";
 
 
 
@@ -57,10 +58,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-        <header>
-          <TopNav />
-        </header>
-       <main>{children}</main>
+          <UsageProvider>
+            <header>
+              <TopNav />
+            </header>
+            <main>{children}</main>
+          </UsageProvider>
        </ThemeProvider>
       </body>
     </html>

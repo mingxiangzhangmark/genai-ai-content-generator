@@ -10,7 +10,7 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen">
       {/* <div className="hidden md:block w-1/4 h-full"> */}
-      <div className="md:block w-1/4">
+      <div className="hidden md:block w-1/4">
         <SideNav />
       </div>
 
