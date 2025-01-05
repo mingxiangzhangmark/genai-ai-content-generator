@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { usageCount } from "@/app/actions/ai";
-// import { checkUserSusbcription } from "@/app/actions/stripe";
+import { checkUserSusbcription } from "@/app/actions/stripe";
 
 interface UsageContextType {
   count: number;
@@ -51,8 +51,8 @@ export const UsageProvider = ({
   };
 
   const fetchSubscription = async () => {
-    // const response = await checkUserSusbcription();
-    // setSubscribed(response?.ok || false);
+    const response = await checkUserSusbcription();
+    setSubscribed(response?.ok || false);
   };
 
   return (

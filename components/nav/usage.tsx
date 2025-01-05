@@ -3,14 +3,23 @@ import React from "react";
 import { useUsage } from "@/context/usage";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import SignInModal from "../modal/sign-in-modal";
+
+
+
 
 export default function Usage() {
-  const { count, subscribed } = useUsage();
+  const { count, subscribed,setOpenModal } = useUsage();
 
   // const credits = Number(process.env.NEXT_PUBLIC_FREE_TIER_USAGE);
   const credits = 10000;
-  const percentage = (count / credits) * 100;
-  // const percentage = subscribed ? 100 : Math.min((count / credits) * 100, 100);
+  // const percentage = (count / credits) * 100;
+  const percentage = subscribed ? 100 : Math.min((count / credits) * 100, 100);
+
+  const handleUpgradeClick = () => {
+    setOpenModal(true); // 显示 SignUpModal 对话框
+  };
+  
 
   return (
     <div className="m-2">
@@ -35,8 +44,19 @@ export default function Usage() {
       <Link href="/membership">
         <Button className="w-full my-3" variant="secondary">
           Upgrade
+            
         </Button>
       </Link>
+
+        {/* 点击触发显示对话框 */}
+        {/* <Button
+        className="w-full my-3"
+        variant="secondary"
+        onClick={handleUpgradeClick}
+      >
+        Upgrade
+
+      </Button> */}
     </div>
   );
 }
