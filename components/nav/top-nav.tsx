@@ -28,6 +28,13 @@ export default function TopNav() {
         <Link href="/membership">🔥 Join free or $9.99/month</Link>
       )}
 
+    <Link href="/gen-ai" className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold py-2 px-4 rounded shadow-md hover:from-blue-600 hover:to-purple-600 transition duration-300 ease-in-out">
+      
+      Generate AI Content Now
+      
+    </Link>
+   
+
       <div className="flex items-center">
         {isSignedIn && (
           <Link href="/dashboard" className="mr-2">
