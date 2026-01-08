@@ -157,7 +157,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useParams } from 'next/navigation';
 import { runAi, saveQuery } from '@/app/actions/ai';
 import '@toast-ui/editor/dist/toastui-editor.css';
-import { Editor } from '@toast-ui/react-editor';
+import EditorCore from '@toast-ui/editor';
 import toast from "react-hot-toast";
 import { useUser } from '@clerk/nextjs';
 
@@ -184,18 +184,47 @@ export interface Template {
   const [query, setQuery] = useState< string > ("");
   const [content, setContent] = useState < string > ("") ;
   const [loading, setLoading] = useState < boolean > (false);
-  const editorRef = React.useRef<any>(null);
+  const editorRef = React.useRef<EditorCore | null>(null);
+  const editorContainerRef = React.useRef<HTMLDivElement | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
   const { user } = useUser();
 
   const email = user?.primaryEmailAddress?.emailAddress || "";
 
     React.useEffect(() => {
-    if (content) {
-      const editorInstance = editorRef.current.getInstance();
-      editorInstance.setMarkdown(content);
+    if (!editorRef.current) return;
+    if (!content) return;
+    const markdown = editorRef.current.getMarkdown();
+    if (markdown !== content) {
+      editorRef.current.setMarkdown(content);
     }
   }, [content]);
+
+  React.useEffect(() => {
+    if (!editorContainerRef.current || editorRef.current) return;
+
+    const instance = new EditorCore({
+      el: editorContainerRef.current,
+      initialValue: 'Generated content will appear here.',
+      previewStyle: 'vertical',
+      height: '600px',
+      initialEditType: 'wysiwyg',
+      useCommandShortcut: true,
+      events: {
+        change: () => {
+          const markdown = editorRef.current?.getMarkdown() ?? '';
+          setContent(markdown);
+        },
+      },
+    });
+
+    editorRef.current = instance;
+
+    return () => {
+      instance.destroy();
+      editorRef.current = null;
+    };
+  }, []);
 
   const t = template.find((item) => item.slug === params.slug) as
  Template;
@@ -218,8 +247,8 @@ export interface Template {
   };
 
    const handleCopy = async () => {
-    const editorInstance = editorRef.current.getInstance();
-    const c = editorInstance.getMarkdown(); // .getHTML()
+    if (!editorRef.current) return;
+    const c = editorRef.current.getMarkdown(); // .getHTML()
 
     try {
       await navigator.clipboard.writeText(c);
@@ -296,17 +325,7 @@ export interface Template {
           </form>
         </div>
           <div className="col-span-2">
-                    <Editor
-            ref={editorRef}
-            initialValue="Generated content will appear here."
-            previewStyle="vertical"
-            height="600px"
-            initialEditType="wysiwyg"
-            useCommandShortcut={true}
-            onChange={() =>
-              setContent(editorRef.current.getInstance().getMarkdown())
-            }
-          />
+            <div ref={editorContainerRef} />
           </div>
         </div>
         </div>
